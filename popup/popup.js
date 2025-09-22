@@ -12,13 +12,4 @@ document.addEventListener("DOMContentLoaded", () => {
       Logger.success("Настройки обновлены пользователем");
     });
   });
-
-  // Сброс
-  resetBtn.addEventListener("click", () => {
-    resetSettings(() => {
-      fillForm({});
-      showPopupMessage("Настройки сброшены", "success");
-      Logger.warn("Настройки сброшены пользователем");
-    });
-  });
 });

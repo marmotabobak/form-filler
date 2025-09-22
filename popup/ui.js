@@ -3,7 +3,6 @@ const fioInput = document.getElementById("fio");
 const fanIdInput = document.getElementById("fanId");
 const autoConsentCheckbox = document.getElementById("autoConsent");
 const saveBtn = document.getElementById("saveBtn");
-const resetBtn = document.getElementById("resetBtn");
 const popupMsg = document.getElementById("popupMsg");
 
 function fillForm(data) {
