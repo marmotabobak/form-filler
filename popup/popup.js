@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const settings = getFormData();
     saveSettings(settings, () => {
       showPopupMessage("Настройки сохранены!", "success");
+      Logger.success("Настройки обновлены пользователем");
     });
   });
 
@@ -17,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resetSettings(() => {
       fillForm({});
       showPopupMessage("Настройки сброшены", "success");
+      Logger.warn("Настройки сброшены пользователем");
     });
   });
 });
