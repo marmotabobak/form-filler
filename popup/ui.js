@@ -21,8 +21,7 @@ function getFormData() {
   };
 }
 
-function showPopupMessage(text, type = "success") {
-  popupMsg.textContent = text;
+function showPopupMessage(type = "success") {
   popupMsg.className = "";
   popupMsg.classList.add("show", type);
   setTimeout(() => popupMsg.classList.remove("show"), 2500);

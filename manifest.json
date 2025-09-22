@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Auto Fill Email",
+  "name": "Auto Fill Forms",
   "version": "1.5",
   "permissions": [
     "storage"
@@ -12,7 +12,7 @@
     "*://o3.ru/*"
   ],
   "background": {
-    "service_worker": "background/background.js"
+    "service_worker": "background/index.js"
   },
   "content_scripts": [
     {
@@ -28,12 +28,12 @@
         "shared/logger.js",
         "content/fillers.js",
         "content/observer.js",
-        "content/content.js"
+        "content/index.js"
       ],
       "run_at": "document_idle"
     }
   ],
   "action": {
-    "default_popup": "popup/popup.html"
+    "default_popup": "popup/index.html"
   }
 }

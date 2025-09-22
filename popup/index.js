@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   saveBtn.addEventListener("click", () => {
     const settings = getFormData();
     saveSettings(settings, () => {
-      showPopupMessage("Настройки сохранены!", "success");
+      showPopupMessage("success");
       Logger.success("Настройки обновлены пользователем");
     });
   });
