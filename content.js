@@ -1,40 +1,82 @@
+// =======================
+// Конфигурация полей
+// =======================
+const FIELD_CONFIG = {
+  email: {
+    keywords: ["почт", "e-mail", "email"],
+    exclude: ["фио", "fan id", "фан id"]
+  },
+  fio: {
+    keywords: ["фио"],
+    exclude: ["почт", "e-mail", "email", "fan id", "фан id"]
+  },
+  fanId: {
+    keywords: ["fan id", "фан id"],
+    exclude: ["почт", "e-mail", "email", "фио"]
+  }
+};
+
+const CONSENT_KEYWORDS = ["персональных данных", "personal data"];
+
+// =======================
+// Утилиты
+// =======================
 function containsKeyword(text, keywords) {
   if (!text) return false;
   const lower = text.toLowerCase();
   return keywords.some(kw => lower.includes(kw.toLowerCase()));
 }
 
-// Универсальный поиск и заполнение по ключевым словам
-function fillField(keywords, fillValue, excludeKeywords = []) {
-  const divs = Array.from(document.querySelectorAll('div'));
+function logInfo(msg, data) {
+  console.log("ℹ️", msg, data || "");
+}
+function logSuccess(msg) {
+  console.log("✅", msg);
+}
+function logWarn(msg) {
+  console.warn("⚠️", msg);
+}
+function logError(msg, err) {
+  console.error("❌", msg, err || "");
+}
+
+// =======================
+// Основная логика заполнения
+// =======================
+function fillFieldByConfig(config, value) {
+  if (!value) return false;
+
+  const divs = Array.from(document.querySelectorAll("div"));
   let filled = false;
 
   for (const div of divs) {
     const text = div.textContent || "";
-    if (
-      keywords.some(kw => text.toLowerCase().includes(kw.toLowerCase())) &&
-      !excludeKeywords.some(exkw => text.toLowerCase().includes(exkw.toLowerCase()))
-    ) {
-      let input = div.querySelector('input, textarea') ||
-                  (div.parentElement && div.parentElement.querySelector('input, textarea'));
 
-      if (input && input.value !== fillValue) {
-        input.value = fillValue;
-        input.setAttribute('value', fillValue);
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-        console.log(`✅ Поле заполнено: ${keywords.join(", ")}`);
+    if (
+      containsKeyword(text, config.keywords) &&
+      !containsKeyword(text, config.exclude)
+    ) {
+      let input =
+        div.querySelector("input, textarea") ||
+        (div.parentElement && div.parentElement.querySelector("input, textarea"));
+
+      if (input && input.value !== value) {
+        input.value = value;
+        input.setAttribute("value", value);
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        logSuccess(`Поле заполнено: ${config.keywords.join(", ")}`);
         filled = true;
       }
     }
   }
 
   if (!filled) {
-    console.warn(`⚠️ Не найдено поле для ключей: ${keywords.join(", ")}`);
+    logWarn(`Не найдено поле для ключей: ${config.keywords.join(", ")}`);
   }
+
   return filled;
 }
 
-// Проверка чекбокса согласия
 function checkConsentCheckbox(autoCheckConsent) {
   if (!autoCheckConsent) return true;
 
@@ -53,67 +95,50 @@ function checkConsentCheckbox(autoCheckConsent) {
       if (parentLabel) labelText = parentLabel.textContent || "";
     }
 
-    const consentTextKeywords = ["персональных данных", "personal data"];
-
-    if (containsKeyword(labelText, consentTextKeywords)) {
+    if (containsKeyword(labelText, CONSENT_KEYWORDS)) {
       if (!checkbox.checked) {
         checkbox.click();
-        console.log("✅ Чекбокс согласия установлен.");
+        logSuccess("Чекбокс согласия установлен.");
       }
       return true;
     }
   }
 
-  console.warn("⚠️ Чекбокс согласия не найден.");
+  logWarn("Чекбокс согласия не найден.");
   return false;
 }
 
-// Отдельные функции для разных типов полей
-function fillEmail(settings) {
-  const emailKeywords = ["почт", "e-mail", "email"];
-  const exclude = ["фио", "fan id", "фан id"];
-  return settings.email ? fillField(emailKeywords, settings.email, exclude) : false;
-}
-
-function fillFio(settings) {
-  const fioKeywords = ["фио"];
-  const exclude = ["почт", "e-mail", "email", "fan id", "фан id"];
-  return settings.fio ? fillField(fioKeywords, settings.fio, exclude) : false;
-}
-
-function fillFanId(settings) {
-  const fanIdKeywords = ["fan id", "фан id"];
-  const exclude = ["почт", "e-mail", "email", "фио"];
-  return settings.fanId ? fillField(fanIdKeywords, settings.fanId, exclude) : false;
-}
-
-// Основная функция
 function fillFormFields(settings) {
-  let emailFilled = fillEmail(settings);
-  let fioFilled = fillFio(settings);
-  let fanIdFilled = fillFanId(settings);
-  let consentChecked = checkConsentCheckbox(settings.autoConsent);
+  const emailFilled = fillFieldByConfig(FIELD_CONFIG.email, settings.email);
+  const fioFilled = fillFieldByConfig(FIELD_CONFIG.fio, settings.fio);
+  const fanIdFilled = fillFieldByConfig(FIELD_CONFIG.fanId, settings.fanId);
+  const consentChecked = checkConsentCheckbox(settings.autoConsent);
 
   return { emailFilled, fioFilled, fanIdFilled, consentChecked };
 }
 
-chrome.storage.sync.get(['email', 'fio', 'fanId', 'autoConsent'], (settings) => {
+// =======================
+// Observer
+// =======================
+chrome.storage.sync.get(["email", "fio", "fanId", "autoConsent"], (settings) => {
   if (chrome.runtime.lastError) {
-    console.error("❌ Ошибка при чтении настроек:", chrome.runtime.lastError);
+    logError("Ошибка при чтении настроек", chrome.runtime.lastError);
     return;
   }
 
   const observer = new MutationObserver(() => {
-    console.log("🔄 MutationObserver triggered");
+    logInfo("MutationObserver triggered");
     attemptFill();
   });
 
   function attemptFill() {
-    const { emailFilled, fioFilled, fanIdFilled, consentChecked } = fillFormFields(settings);
+    const result = fillFormFields(settings);
 
-    if (emailFilled && fioFilled && fanIdFilled && consentChecked) {
+    if (result.emailFilled && result.fioFilled && result.fanIdFilled && result.consentChecked) {
       observer.disconnect();
-      console.log("🎉 Все поля заполнены и согласие установлено. Observer остановлен.");
+      logSuccess("Все поля заполнены и согласие установлено. Observer остановлен.");
+    } else {
+      logInfo("Попытка заполнения:", result);
     }
   }
 
@@ -121,7 +146,7 @@ chrome.storage.sync.get(['email', 'fio', 'fanId', 'autoConsent'], (settings) => 
     attemptFill();
     observer.observe(document.body, { childList: true, subtree: true });
   } catch (err) {
-    console.error("❌ Ошибка при попытке заполнить форму:", err);
+    logError("Ошибка при запуске заполнения формы", err);
   }
 });
 
