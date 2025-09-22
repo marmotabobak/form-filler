@@ -2,20 +2,9 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <style>
-    #popupMsg {
-      display: none;
-      color: green;
-      margin-top: 5px;
-      font-size: 14px;
-    }
-    #popupMsg.show {
-      display: block;
-    }
-  </style>
+  <link rel="stylesheet" href="popup/popup.css" />
 </head>
 <body>
-  
   <label for="email">Рабочий e-mail</label>
   <input type="email" id="email" placeholder="example@mail.com" />
 
@@ -34,7 +23,9 @@
 
   <div id="popupMsg">Настройки сохранены!</div>
 
-  <script src="popup.js"></script>
+  <script src="popup/logger.js"></script>
+  <script src="popup/storage.js"></script>
+  <script src="popup/ui.js"></script>
+  <script src="popup/popup.js"></script>
 </body>
 </html>
-
