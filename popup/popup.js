@@ -4,11 +4,19 @@ document.addEventListener("DOMContentLoaded", () => {
     fillForm(data);
   });
 
-  // Сохраняем при клике
+  // Сохраняем
   saveBtn.addEventListener("click", () => {
     const settings = getFormData();
     saveSettings(settings, () => {
-      showPopupMessage("Настройки сохранены!");
+      showPopupMessage("Настройки сохранены!", "success");
+    });
+  });
+
+  // Сброс
+  resetBtn.addEventListener("click", () => {
+    resetSettings(() => {
+      fillForm({});
+      showPopupMessage("Настройки сброшены", "success");
     });
   });
 });

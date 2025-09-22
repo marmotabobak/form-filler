@@ -3,6 +3,7 @@ const fioInput = document.getElementById("fio");
 const fanIdInput = document.getElementById("fanId");
 const autoConsentCheckbox = document.getElementById("autoConsent");
 const saveBtn = document.getElementById("saveBtn");
+const resetBtn = document.getElementById("resetBtn");
 const popupMsg = document.getElementById("popupMsg");
 
 function fillForm(data) {
@@ -21,8 +22,9 @@ function getFormData() {
   };
 }
 
-function showPopupMessage(text) {
+function showPopupMessage(text, type = "success") {
   popupMsg.textContent = text;
-  popupMsg.classList.add("show");
-  setTimeout(() => popupMsg.classList.remove("show"), 2000);
+  popupMsg.className = "";
+  popupMsg.classList.add("show", type);
+  setTimeout(() => popupMsg.classList.remove("show"), 2500);
 }
