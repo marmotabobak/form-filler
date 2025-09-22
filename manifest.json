@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Fill Email Button",
+  "version": "1.0",
+  "permissions": ["scripting"],
+  "host_permissions": [
+    "*://*.ozon.ru/*",
+    "*://ozon.ru/*",
+    "*://*.o3.ru/*",
+    "*://o3.ru/*"
+  ],
+  "action": {
+    "default_title": "Заполнить email",
+    "default_popup": "popup.html"
+  }
+}
+
