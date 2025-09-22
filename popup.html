@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Настройки Auto Fill</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap");
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 12px 16px;
+      background-color: #f8f9fa;
+      color: #444c56;
+      width: 320px;
+      box-sizing: border-box;
+      font-size: 13px;
+      user-select: none;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 400;
+      color: #555b6e;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #333;
+      font-weight: 400;
+      outline-offset: 1.5px;
+      transition: border-color 0.2s ease-in-out;
+      box-sizing: border-box;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus {
+      border-color: #7a90cc;
+      box-shadow: 0 0 5px rgba(122, 144, 204, 0.35);
+      outline: none;
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin: 12px 0 20px 0;
+      gap: 10px;
+      color: #555b6e;
+      font-weight: 400;
+      font-size: 13px;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      border: 1px solid #bbb;
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+
+    .checkbox-container input[type="checkbox"]:checked {
+      background-color: #7983ff;
+      border-color: #7983ff;
+    }
+
+    button {
+      padding: 8px 0;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      background-color: #7983ff;
+      color: #fff;
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 3px 8px rgba(121, 131, 255, 0.5);
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #596fcc;
+    }
+
+    .popup-message {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #4c9a2a;
+      color: #fff;
+      padding: 8px 20px;
+      font-weight: 400;
+      font-size: 14px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      z-index: 9999;
+    }
+
+    .popup-message.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+  </style>
+</head>
+<body>
+  
+  <label for="email">Рабочий e-mail</label>
+  <input type="email" id="email" placeholder="example@mail.com" />
+
+  <label for="fio">ФИО</label>
+  <input type="text" id="fio" placeholder="Иванов Иван Иванович" />
+
+  <label for="fanId">Fan ID</label>
+  <input type="text" id="fanId" placeholder="195074116" />
+
+  <div class="checkbox-container">
+    <input type="checkbox" id="autoConsent" />
+    <label for="autoConsent">Автоматически отмечать согласие на обработку персональных данных</label>
+  </div>
+
+  <button id="saveBtn">Сохранить настройки</button>
+
+  <div class="popup-message" id="popupMsg">Настройки сохранены!</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
+

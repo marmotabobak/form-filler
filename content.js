@@ -1,20 +1,3 @@
-const AUTO_CHECK_CONSENT = true;
-
-const email = "igurvantsev@ozon.ru";
-const fioValue = "Урванцев Игорь Анатольевич";
-const fanIdValue = "195074116";
-
-const emailKeywords = ["почт", "e-mail", "email"];
-const fioKeywords = ["фио"];
-const fanIdKeywords = ["fan id", "фан id"];
-
-const consentTextKeywords = ["персональных данных", "personal data"];
-
-let emailFilled = false;
-let fioFilled = false;
-let fanIdFilled = false;
-let consentChecked = false;
-
 function containsKeyword(text, keywords) {
   if (!text) return false;
   const lower = text.toLowerCase();
@@ -45,8 +28,8 @@ function findAndFillByKeywords(keywords, fillValue, excludeKeywords = []) {
   return false;
 }
 
-function checkConsentCheckbox() {
-  if (consentChecked || !AUTO_CHECK_CONSENT) return AUTO_CHECK_CONSENT;
+function checkConsentCheckbox(autoCheckConsent) {
+  if (!autoCheckConsent) return true;
 
   const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
 
@@ -63,41 +46,58 @@ function checkConsentCheckbox() {
       if (parentLabel) labelText = parentLabel.textContent || "";
     }
 
+    const consentTextKeywords = ["персональных данных", "personal data"];
+
     if (containsKeyword(labelText, consentTextKeywords)) {
       if (!checkbox.checked) {
-        // Вместо check + events — просто программно кликаем по чекбоксу
         checkbox.click();
       }
-      consentChecked = true;
       return true;
     }
   }
+
   return false;
 }
 
-function fillFormFields() {
-  if (!emailFilled) {
-    emailFilled = findAndFillByKeywords(emailKeywords, email, [...fioKeywords, ...fanIdKeywords]);
+function fillFormFields(settings) {
+  const emailKeywords = ["почт", "e-mail", "email"];
+  const fioKeywords = ["фио"];
+  const fanIdKeywords = ["fan id", "фан id"];
+
+  let emailFilled = false;
+  let fioFilled = false;
+  let fanIdFilled = false;
+  let consentChecked = false;
+
+  if (settings.email) {
+    emailFilled = findAndFillByKeywords(emailKeywords, settings.email, [...fioKeywords, ...fanIdKeywords]);
   }
-  if (!fioFilled) {
-    fioFilled = findAndFillByKeywords(fioKeywords, fioValue, [...emailKeywords, ...fanIdKeywords]);
+  if (settings.fio) {
+    fioFilled = findAndFillByKeywords(fioKeywords, settings.fio, [...emailKeywords, ...fanIdKeywords]);
   }
-  if (!fanIdFilled) {
-    fanIdFilled = findAndFillByKeywords(fanIdKeywords, fanIdValue, [...emailKeywords, ...fioKeywords]);
+  if (settings.fanId) {
+    fanIdFilled = findAndFillByKeywords(fanIdKeywords, settings.fanId, [...emailKeywords, ...fioKeywords]);
   }
-  if (AUTO_CHECK_CONSENT && !consentChecked) {
-    consentChecked = checkConsentCheckbox();
-  }
-  return emailFilled && fioFilled && fanIdFilled && (AUTO_CHECK_CONSENT ? consentChecked : true);
+  consentChecked = checkConsentCheckbox(settings.autoConsent);
+
+  return emailFilled && fioFilled && fanIdFilled && consentChecked;
 }
 
-fillFormFields();
-
-const observer = new MutationObserver(() => {
-  if (fillFormFields()) {
-    observer.disconnect();
+chrome.storage.sync.get(['email', 'fio', 'fanId', 'autoConsent'], (settings) => {
+  function attemptFill() {
+    if (fillFormFields(settings)) {
+      observer.disconnect();
+      console.log('All fields filled and consent set.');
+    }
   }
-});
+  
+  attemptFill();
 
-observer.observe(document.body, { childList: true, subtree: true });
+  const observer = new MutationObserver(() => {
+    console.log('MutationObserver triggered');
+    attemptFill();
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+});
 
