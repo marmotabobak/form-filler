@@ -15,12 +15,15 @@ function fillFieldByConfig(config, value, logOnMiss = true) {
         div.querySelector("input, textarea") ||
         (div.parentElement && div.parentElement.querySelector("input, textarea"));
 
-      if (input && input.value !== value) {
-        input.value = value;
-        input.setAttribute("value", value);
-        input.dispatchEvent(new Event("input", { bubbles: true }));
-        Logger.success(`Field is set: "${value}" for keywords: ${config.keywords.join(", ")}`);
+      if (input) {
+        if (input.value !== value) {
+          input.value = value;
+          input.setAttribute("value", value);
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+          Logger.success(`Field is set: "${value}" for keywords: ${config.keywords.join(", ")}`);
+        }
         filled = true;
+        break;
       }
     }
   }

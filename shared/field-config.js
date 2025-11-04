@@ -1,4 +1,3 @@
-// Конфигурация ключевых слов для разных типов полей
 const FIELD_CONFIG = {
   email: {
     keywords: [

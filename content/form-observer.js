@@ -30,9 +30,16 @@ function startObserver(settings) {
     }
 
     setTimeout(() => {
-      observer.disconnect();
-      Logger.warn(`Observer stopped by timeout ${TIMEOUT_MS / 1000} seconds.`);
-    }, TIMEOUT_MS);
+      try {
+        // Final attempt with forced logging of misses
+        attemptFill(settings, observer, attemptCount, true);
+      } catch (e) {
+        Logger.warn("Final attempt on timeout failed.", e);
+      } finally {
+        observer.disconnect();
+        Logger.warn(`Observer stopped by timeout ${TIMEOUT_MS / 1000} seconds.`);
+      }
+    }, TIMEOUT_MS);  
   } catch (err) {
     Logger.error("Error starting Observer.", err);
   }
@@ -49,7 +56,7 @@ function attemptFill(settings, observer, attemptCount, isLast) {
     Logger.warn(`Observer stopped after ${MAX_ATTEMPTS} attempts.`);
   } else {
     if (isLast || attemptCount % 5 === 0) {
-      Logger.info("Attempt #" + attemptCount + ": " + result);
+      Logger.info("Attempt #" + attemptCount, result);
     }
   }
 }
