@@ -19,14 +19,14 @@ function fillFieldByConfig(config, value, logOnMiss = true) {
         input.value = value;
         input.setAttribute("value", value);
         input.dispatchEvent(new Event("input", { bubbles: true }));
-        Logger.success(`Поле заполнено: ${config.keywords.join(", ")}`);
+        Logger.success(`Field is set: "${value}" for keywords: ${config.keywords.join(", ")}`);
         filled = true;
       }
     }
   }
 
   if (!filled && logOnMiss) {
-    Logger.warn(`Не найдено поле для ключей: ${config.keywords.join(", ")}`);
+    Logger.warn(`Field not found for keywords: ${config.keywords.join(", ")}`);
   }
 
   return filled;
@@ -53,13 +53,13 @@ function checkConsentCheckbox(autoCheckConsent) {
     if (containsKeyword(labelText, CONSENT_KEYWORDS)) {
       if (!checkbox.checked) {
         checkbox.click();
-        Logger.success("Чекбокс согласия установлен.");
+        Logger.success("Checkbox is checked: " + checkbox.id + " (" + labelText + ")");
       }
       return true;
     }
   }
 
-  Logger.warn("Чекбокс согласия не найден.");
+  Logger.warn("Checkbox not found.");
   return false;
 }
 
