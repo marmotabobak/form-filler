@@ -15,3 +15,5 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(`${prefix} [${message.level.toUpperCase()}] ${message.msg}`, message.data || "");
   }
 });
+
+

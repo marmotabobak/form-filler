@@ -1,4 +1,4 @@
-function fillFieldByConfig(config, value) {
+function fillFieldByConfig(config, value, logOnMiss = true) {
   if (!value) return false;
 
   const divs = Array.from(document.querySelectorAll("div"));
@@ -25,7 +25,7 @@ function fillFieldByConfig(config, value) {
     }
   }
 
-  if (!filled) {
+  if (!filled && logOnMiss) {
     Logger.warn(`Не найдено поле для ключей: ${config.keywords.join(", ")}`);
   }
 
@@ -63,11 +63,13 @@ function checkConsentCheckbox(autoCheckConsent) {
   return false;
 }
 
-function fillFormFields(settings) {
+function fillFormFields(settings, logOnMiss = false) {
   return {
-    emailFilled: fillFieldByConfig(FIELD_CONFIG.email, settings.email),
-    fioFilled: fillFieldByConfig(FIELD_CONFIG.fio, settings.fio),
-    fanIdFilled: fillFieldByConfig(FIELD_CONFIG.fanId, settings.fanId),
+    emailFilled: fillFieldByConfig(FIELD_CONFIG.email, settings.email, logOnMiss),
+    fioFilled: fillFieldByConfig(FIELD_CONFIG.fio, settings.fio, logOnMiss),
+    fanIdFilled: fillFieldByConfig(FIELD_CONFIG.fanId, settings.fanId, logOnMiss),
     consentChecked: checkConsentCheckbox(settings.autoConsent)
   };
 }
+
+

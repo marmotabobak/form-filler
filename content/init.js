@@ -5,3 +5,5 @@ chrome.storage.sync.get(["email", "fio", "fanId", "autoConsent"], (settings) => 
   }
   startObserver(settings);
 });
+
+
