@@ -17,10 +17,8 @@
   "content_scripts": [
     {
       "matches": [
-        "*://*.ozon.ru/*",
-        "*://ozon.ru/*",
-        "*://*.o3.ru/*",
-        "*://o3.ru/*"
+        "*://forms.ozon.ru/*",
+        "*://forms.o3.ru/*"
       ],
       "js": [
         "shared/config.js",
