@@ -20,8 +20,7 @@ function getFormData() {
     email: emailInput.value.trim(),
     fio: fioInput.value.trim(),
     fanId: fanIdInput.value.trim(),
-    autoConsent: autoConsentCheckbox.checked,
-    enabled: !!enabledCheckbox.checked
+    autoConsent: autoConsentCheckbox.checked
   };
 }
 
