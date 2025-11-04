@@ -1,5 +1,5 @@
 function loadSettings(callback) {
-  chrome.storage.sync.get(["email", "fio", "fanId", "autoConsent"], (data) => {
+  chrome.storage.sync.get(["email", "fio", "fanId", "autoConsent", "enabled"], (data) => {
     if (chrome.runtime.lastError) {
       Logger.error("Error loading settings.", chrome.runtime.lastError);
       return;
