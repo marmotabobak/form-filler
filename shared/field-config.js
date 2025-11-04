@@ -13,7 +13,6 @@ const FIELD_CONFIG = {
       "имя",
       "отчество",
       "полное имя",
-      "full name"
     ],
     exclude: ["почт", "e-mail", "email", "fan id", "фан id"]
   },
@@ -24,14 +23,8 @@ const FIELD_CONFIG = {
 };
 
 const CONSENT_KEYWORDS = [
-  "персональных данных",
-  "personal data",
-  "согласие",
-  "обработка персональных данных",
-  "privacy",
-  "terms",
-  "agreement",
-  "ПД"
+  "персональны",
+  "пд"
 ];
 
 
