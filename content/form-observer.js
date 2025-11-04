@@ -1,5 +1,5 @@
 const MAX_ATTEMPTS = 20;
-const TIMEOUT_MS = 5000;  // Maximum timeout for observer (5 seconds).
+const TIMEOUT_MS = 5000;  // Maximum timeout for Observer.
 const DEBOUNCE_MS = 200;
 
 function startObserver(settings) {
@@ -10,7 +10,7 @@ function startObserver(settings) {
     attemptCount++;
     const isLast = attemptCount >= MAX_ATTEMPTS;
     if (isLast || attemptCount % 5 === 0) {
-      Logger.info("MutationObserver: попытка", { attemptCount });
+      Logger.info("MutationObserver: attempt #" + attemptCount, { attemptCount });
     }
     attemptFill(settings, observer, attemptCount, isLast);
     if (isLast) {
@@ -29,13 +29,12 @@ function startObserver(settings) {
       observer.observe(document.body, { childList: true, subtree: true });
     }
 
-    // ограничение по времени
     setTimeout(() => {
       observer.disconnect();
-      Logger.warn(`Observer остановлен по таймауту ${TIMEOUT_MS / 1000} секунд.`);
+      Logger.warn(`Observer stopped by timeout ${TIMEOUT_MS / 1000} seconds.`);
     }, TIMEOUT_MS);
   } catch (err) {
-    Logger.error("Ошибка при запуске заполнения формы", err);
+    Logger.error("Error starting Observer.", err);
   }
 }
 
@@ -44,13 +43,13 @@ function attemptFill(settings, observer, attemptCount, isLast) {
 
   if (result.emailFilled && result.fioFilled && result.fanIdFilled && result.consentChecked) {
     observer.disconnect();
-    Logger.success("Все поля заполнены и согласие установлено. Observer остановлен.");
+    Logger.success("All fields are set. Observer stopped.");
   } else if (attemptCount >= MAX_ATTEMPTS) {
     observer.disconnect();
-    Logger.warn(`Observer остановлен после ${MAX_ATTEMPTS} попыток.`);
+    Logger.warn(`Observer stopped after ${MAX_ATTEMPTS} attempts.`);
   } else {
     if (isLast || attemptCount % 5 === 0) {
-      Logger.info("Попытка заполнения:", result);
+      Logger.info("Attempt #" + attemptCount + ": " + result);
     }
   }
 }
