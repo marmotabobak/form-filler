@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Ozon Forms Filler",
+  "name": "Ozon Form Filler.",
   "version": "1.0",
-  "description": "Automatic filling of forms on Ozon and o3 websites",
+  "description": "Automatic form filling at Ozon and o3 websites.",
   "author": "Igor Urvantsev",
   "icons": {
     "16": "icons/icon16.png",
@@ -25,7 +25,12 @@
         "content/form-observer.js",
         "content/init.js"
       ],
-      "run_at": "document_idle"
+      "run_at": "document_idle",
+      "icon": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+      }
     }
   ],
   "action": {
