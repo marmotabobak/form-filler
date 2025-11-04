@@ -1,9 +1,16 @@
-chrome.runtime.onInstalled.addListener(() => {
-  console.log("[X] Service worker installed.");
+chrome.runtime.onInstalled.addListener((details) => {
+  const { version } = chrome.runtime.getManifest();
+  console.log("[Lifecycle] onInstalled", {
+    reason: details.reason, previousVersion: details.previousVersion, version,
+    ts: new Date().toISOString()
+  });
 });
 
 chrome.runtime.onStartup.addListener(() => {
-  console.log("[X] Service worker started.");
+  console.log("[Lifecycle] onStartup", {
+    version: chrome.runtime.getManifest().version,
+    ts: new Date().toISOString()
+  });
 });
 
 // Receive logs from other parts of the extension.
