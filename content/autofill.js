@@ -1,3 +1,66 @@
+// Returns the text of the associated label (<label for> or parent <label>).
+function getAssociatedLabelText(input) {
+  if (input.id) {
+    const lbl = document.querySelector(`label[for="${input.id}"]`);
+    if (lbl && lbl.textContent) return lbl.textContent;
+  }
+  const parentLabel = input.closest("label");
+  if (parentLabel && parentLabel.textContent) return parentLabel.textContent;
+  return "";
+}
+
+// Returns a short descriptor for logging.
+function getInputDescriptor(input) {
+  return (
+    (document.querySelector(`label[for="${input.id}"]`)?.textContent || "").trim() ||
+    input.getAttribute("placeholder") ||
+    input.getAttribute("name") ||
+    input.getAttribute("title") ||
+    input.getAttribute("aria-label") ||
+    "input"
+  );
+}
+
+// Returns the vicinity text for matching by keywords.
+function buildVicinityText(input) {
+  const labelText = getAssociatedLabelText(input);
+  const placeholder = input.getAttribute("placeholder") || "";
+  const nameAttr = input.getAttribute("name") || "";
+  const titleAttr = input.getAttribute("title") || "";
+  const ariaLabel = input.getAttribute("aria-label") || "";
+  return `${labelText} ${placeholder} ${nameAttr} ${titleAttr} ${ariaLabel}`;
+}
+
+// Returns the candidates: inside div and up to two next siblings.
+function findCandidateInputsNearDiv(div) {
+  const inputs = Array.from(div.querySelectorAll("input, textarea"));
+  if (inputs.length === 0) {
+    let sib = div.nextElementSibling;
+    for (let i = 0; i < 2 && sib; i++) {
+      inputs.push(...sib.querySelectorAll("input, textarea"));
+      if (inputs.length) break;
+      sib = sib.nextElementSibling;
+    }
+  }
+  return inputs;
+}
+
+// Checks if the input matches the config by vicinity.
+function inputMatchesConfig(input, config) {
+  const vicinityText = buildVicinityText(input);
+  return (
+    containsKeyword(vicinityText, config.keywords) &&
+    !containsKeyword(vicinityText, config.exclude)
+  );
+}
+
+// Sets the value and sends the input event.
+function setInputValueWithEvents(input, value) {
+  input.value = value;
+  input.setAttribute("value", value);
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
 function fillFieldByConfig(config, value, logOnMiss = true) {
   if (!value) return false;
 
@@ -11,16 +74,25 @@ function fillFieldByConfig(config, value, logOnMiss = true) {
       containsKeyword(text, config.keywords) &&
       !containsKeyword(text, config.exclude)
     ) {
-      let input =
-        div.querySelector("input, textarea") ||
-        (div.parentElement && div.parentElement.querySelector("input, textarea"));
+      const inputs = findCandidateInputsNearDiv(div);
 
-      if (input) {
-        if (input.value !== value) {
-          input.value = value;
-          input.setAttribute("value", value);
-          input.dispatchEvent(new Event("input", { bubbles: true }));
-          Logger.success(`Field is set: "${value}" for keywords: ${config.keywords.join(", ")}`);
+      let chosen = null;
+      for (const input of inputs) {
+        if (inputMatchesConfig(input, config)) {
+          chosen = input;
+          break;
+        }
+      }
+
+      if (!chosen && inputs.length) {
+        chosen = inputs[0];
+      }
+
+      if (chosen) {
+        if (chosen.value !== value) {
+          setInputValueWithEvents(chosen, value);
+          const descriptor = getInputDescriptor(chosen);
+          Logger.success(`Field ("${descriptor}") is set: "${value}".`);
         }
         filled = true;
         break;
@@ -56,7 +128,7 @@ function checkConsentCheckbox(autoCheckConsent) {
     if (containsKeyword(labelText, CONSENT_KEYWORDS)) {
       if (!checkbox.checked) {
         checkbox.click();
-        Logger.success("Checkbox is checked: " + checkbox.id + " (" + labelText + ")");
+        Logger.success(`Checkbox ("${labelText}").`);
       }
       return true;
     }

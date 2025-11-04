@@ -5,20 +5,31 @@ const DEBOUNCE_MS = 200;
 function startObserver(settings) {
   let attemptCount = 0;
   let debounceTimer;
+  let stopped = false;
+  let timeoutId;
 
   const runAttempt = () => {
+    if (stopped) return;
     attemptCount++;
     const isLast = attemptCount >= MAX_ATTEMPTS;
     if (isLast || attemptCount % 5 === 0) {
       Logger.info("MutationObserver: attempt #" + attemptCount, { attemptCount });
     }
-    attemptFill(settings, observer, attemptCount, isLast);
+    const done = attemptFill(settings, observer, attemptCount, isLast);
+    if (done) {
+      stopped = true;
+      clearTimeout(debounceTimer);
+      if (timeoutId) clearTimeout(timeoutId);
+      observer.disconnect();
+      return;
+    }
     if (isLast) {
       observer.disconnect();
     }
   };
 
   const observer = new MutationObserver(() => {
+    if (stopped) return;
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(runAttempt, DEBOUNCE_MS);
   });
@@ -29,13 +40,22 @@ function startObserver(settings) {
       observer.observe(document.body, { childList: true, subtree: true });
     }
 
-    setTimeout(() => {
+    timeoutId = setTimeout(() => {
+      if (stopped) return;
       try {
         // Final attempt with forced logging of misses
-        attemptFill(settings, observer, attemptCount, true);
+        const done = attemptFill(settings, observer, attemptCount, true);
+        if (done) {
+          stopped = true;
+          clearTimeout(debounceTimer);
+          observer.disconnect();
+          return;
+        }
       } catch (e) {
         Logger.warn("Final attempt on timeout failed.", e);
       } finally {
+        if (stopped) return;
+        stopped = true;
         observer.disconnect();
         Logger.warn(`Observer stopped by timeout ${TIMEOUT_MS / 1000} seconds.`);
       }
@@ -48,16 +68,26 @@ function startObserver(settings) {
 function attemptFill(settings, observer, attemptCount, isLast) {
   const result = fillFormFields(settings, isLast);
 
-  if (result.emailFilled && result.fioFilled && result.fanIdFilled && result.consentChecked) {
+  // Fill only those fields that are defined by the settings.
+  const allDefinedFieldsAreFilled =
+    (!settings.email || result.emailFilled) &&
+    (!settings.fio || result.fioFilled) &&
+    (!settings.fanId || result.fanIdFilled) &&
+    (!settings.autoConsent || result.consentChecked);
+
+  if (allDefinedFieldsAreFilled) {
     observer.disconnect();
     Logger.success("All fields are set. Observer stopped.");
+    return true;
   } else if (attemptCount >= MAX_ATTEMPTS) {
     observer.disconnect();
     Logger.warn(`Observer stopped after ${MAX_ATTEMPTS} attempts.`);
+    return false;
   } else {
     if (isLast || attemptCount % 5 === 0) {
       Logger.info("Attempt #" + attemptCount, result);
     }
+    return false;
   }
 }
 
