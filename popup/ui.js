@@ -11,8 +11,7 @@ function fillForm(data) {
   if (data.fio) fioInput.value = data.fio;
   if (data.fanId) fanIdInput.value = data.fanId;
   autoConsentCheckbox.checked = !!data.autoConsent;
-  // По умолчанию включено, если не задано
-  enabledCheckbox.checked = data.enabled !== false;
+  enabledCheckbox.checked = !!data.enabled;
 }
 
 function getFormData() {

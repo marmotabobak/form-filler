@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // On/oOff toggle: saved immediately upon change without waiting for saveBtn click.
   const enabledEl = document.getElementById("enabled");
   if (enabledEl) {
     enabledEl.addEventListener("change", (e) => {
