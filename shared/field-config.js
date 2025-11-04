@@ -2,11 +2,6 @@ const FIELD_CONFIG = {
   email: {
     keywords: [
       "почт",
-      "e-mail",
-      "email",
-      "эл. почта",
-      "электронная почта",
-      "email address",
       "mail"
     ],
     exclude: ["фио", "fan id", "фан id"]

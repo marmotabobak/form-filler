@@ -91,7 +91,7 @@ function fillFieldByConfig(config, value, logOnMiss = true) {
       if (chosen) {
         if (chosen.value !== value) {
           setInputValueWithEvents(chosen, value);
-          const descriptor = getInputDescriptor(chosen);
+          const descriptor = getInputDescriptor(chosen).replace(/\s+/g, " ").trim();
           Logger.success(`Field ("${descriptor}") is set: "${value}".`);
         }
         filled = true;
