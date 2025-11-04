@@ -4,14 +4,26 @@ document.addEventListener("DOMContentLoaded", () => {
     fillForm(data);
   });
 
-  // Сохраняем
-  saveBtn.addEventListener("click", () => {
-    const settings = getFormData();
-    saveSettings(settings, () => {
-      showPopupMessage("success");
-      Logger.success("Настройки обновлены пользователем");
+  if (typeof emailInput !== "undefined" && emailInput) {
+    emailInput.addEventListener("input", () => {
+      chrome.storage.sync.set({ email: emailInput.value.trim() });
     });
-  });
+  }
+  if (typeof fioInput !== "undefined" && fioInput) {
+    fioInput.addEventListener("input", () => {
+      chrome.storage.sync.set({ fio: fioInput.value.trim() });
+    });
+  }
+  if (typeof fanIdInput !== "undefined" && fanIdInput) {
+    fanIdInput.addEventListener("input", () => {
+      chrome.storage.sync.set({ fanId: fanIdInput.value.trim() });
+    });
+  }
+  if (typeof autoConsentCheckbox !== "undefined" && autoConsentCheckbox) {
+    autoConsentCheckbox.addEventListener("change", () => {
+      chrome.storage.sync.set({ autoConsent: !!autoConsentCheckbox.checked });
+    });
+  }
 
   // On/oOff toggle: saved immediately upon change without waiting for saveBtn click.
   const enabledEl = document.getElementById("enabled");
