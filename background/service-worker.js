@@ -1,12 +1,12 @@
 chrome.runtime.onInstalled.addListener(() => {
-  console.log("🟢 Extension installed");
+  console.log("[X] Service worker installed.");
 });
 
 chrome.runtime.onStartup.addListener(() => {
-  console.log("🟢 Extension started");
+  console.log("[X] Service worker started.");
 });
 
-// Принимаем логи из других частей расширения
+// Receive logs from other parts of the extension.
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "log") {
     const prefix = sender.tab
@@ -15,5 +15,3 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(`${prefix} [${message.level.toUpperCase()}] ${message.msg}`, message.data || "");
   }
 });
-
-
