@@ -48,6 +48,80 @@ h3 {
   font-size: 13px;
 }
 
+/* Toggle (enabled) */
+.toggle-row {
+  margin-top: 12px;
+  padding: 8px 10px;
+  border: 1px solid #e6e6e6;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+.toggle-row .text-label {
+  flex: 1;
+  font-size: 13px;
+}
+
+.toggle {
+  position: relative;
+  /* Настраиваемые размеры тумблера */
+  --w: 36px;           /* ширина тумблера (сделали уже) */
+  --h: 24px;           /* высота тумблера */
+  --gap: 3px;          /* отступ шарика от краёв */
+  --knob: calc(var(--h) - 2 * var(--gap));
+
+  width: var(--w);
+  height: var(--h);
+  display: inline-block;
+  /* перекрываем правило .row label { flex: 0 0 90px; } */
+  flex: 0 0 var(--w);
+}
+
+/* Болеe специфичное переопределение для случая, когда .toggle — это <label> внутри .row */
+.row .toggle {
+  flex: 0 0 var(--w);
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ccc;
+  transition: 0.2s;
+  border-radius: 24px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: var(--knob);
+  width: var(--knob);
+  left: var(--gap);
+  top: var(--gap);
+  background: #fff;
+  transition: 0.2s;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+}
+
+.toggle input:checked + .toggle-slider {
+  background: #4caf50;
+}
+
+.toggle input:checked + .toggle-slider:before {
+  /* Формула: финальная позиция = ширина - шарик - два отступа */
+  transform: translateX(calc(var(--w) - var(--knob) - (2 * var(--gap))));
+}
+
 button {
   margin-top: 14px;
   padding: 7px;
