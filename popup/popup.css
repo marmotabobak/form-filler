@@ -64,20 +64,16 @@ h3 {
 
 .toggle {
   position: relative;
-  /* Настраиваемые размеры тумблера */
-  --w: 36px;           /* ширина тумблера (сделали уже) */
-  --h: 24px;           /* высота тумблера */
-  --gap: 3px;          /* отступ шарика от краёв */
+  --w: 36px;
+  --h: 24px;
+  --gap: 3px;
   --knob: calc(var(--h) - 2 * var(--gap));
 
   width: var(--w);
   height: var(--h);
   display: inline-block;
-  /* перекрываем правило .row label { flex: 0 0 90px; } */
-  flex: 0 0 var(--w);
 }
 
-/* Болеe специфичное переопределение для случая, когда .toggle — это <label> внутри .row */
 .row .toggle {
   flex: 0 0 var(--w);
 }
@@ -118,7 +114,7 @@ h3 {
 }
 
 .toggle input:checked + .toggle-slider:before {
-  /* Формула: финальная позиция = ширина - шарик - два отступа */
+  /* Final position = width - knob - 2 * gap */
   transform: translateX(calc(var(--w) - var(--knob) - (2 * var(--gap))));
 }
 

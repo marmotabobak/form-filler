@@ -1,41 +1,38 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Загружаем сохранённые настройки
   loadSettings((data) => {
     fillForm(data);
   });
 
-  if (typeof emailInput !== "undefined" && emailInput) {
+  const emailInput = document.getElementById("email");
+  const fioInput = document.getElementById("fio");
+  const fanIdInput = document.getElementById("fanId");
+  const autoConsentCheckbox = document.getElementById("autoConsent");
+  const enabledEl = document.getElementById("enabled");
+
+  if (emailInput) {
     emailInput.addEventListener("input", () => {
       chrome.storage.sync.set({ email: emailInput.value.trim() });
     });
   }
-  if (typeof fioInput !== "undefined" && fioInput) {
+  if (fioInput) {
     fioInput.addEventListener("input", () => {
       chrome.storage.sync.set({ fio: fioInput.value.trim() });
     });
   }
-  if (typeof fanIdInput !== "undefined" && fanIdInput) {
+  if (fanIdInput) {
     fanIdInput.addEventListener("input", () => {
       chrome.storage.sync.set({ fanId: fanIdInput.value.trim() });
     });
   }
-  if (typeof autoConsentCheckbox !== "undefined" && autoConsentCheckbox) {
+  if (autoConsentCheckbox) {
     autoConsentCheckbox.addEventListener("change", () => {
       chrome.storage.sync.set({ autoConsent: !!autoConsentCheckbox.checked });
     });
   }
 
-  const enabledEl = document.getElementById("enabled");
   if (enabledEl) {
-    enabledEl.addEventListener("change", (e) => {
-      const enabled = !!enabledEl.checked;
-      chrome.storage.sync.set({ enabled }, () => {
-        if (chrome.runtime.lastError) {
-          Logger.warn("Не удалось сохранить флаг включения", chrome.runtime.lastError);
-          return;
-        }
-        Logger.info("Флаг автозаполнения обновлён", { enabled });
-      });
+    enabledEl.addEventListener("change", () => {
+      chrome.storage.sync.set({ enabled: !!enabledEl.checked });
     });
   }
 });
